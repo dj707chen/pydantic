@@ -256,7 +256,7 @@ class BaseModel(metaclass=_model_construction.ModelMetaclass):
     # the constructor parameter.
     #   **data: Any — accepts any number of keyword arguments, which become the field values to validate.
     #       For example, MyModel(name="foo", age=42).
-    #   -> None — returns nothing; the model is mutated in-place via
+    #   -> None — returns nothing; the model is mutated in-place via <------------------------------------------- ❤️ 
     #       __pydantic_validator__.validate_python(data, self_instance=self).
     # The key design choice here is the / making self positional-only — without it, a model with a field named self
     # would cause a conflict at instantiation.
@@ -270,8 +270,8 @@ class BaseModel(metaclass=_model_construction.ModelMetaclass):
         """
         # `__tracebackhide__` tells pytest and some other tools to omit this function from tracebacks
         __tracebackhide__ = True
-        validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
-        if self is not validated_self:
+        validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self) # <---------- ❤️ 
+        if self is not validated_self: # CC: Object identity check to see if the validator returned a new instance
             warnings.warn(
                 'A custom validator is returning a value other than `self`.\n'
                 "Returning anything other than `self` from a top level model validator isn't supported when validating via `__init__`.\n"
