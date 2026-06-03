@@ -250,6 +250,16 @@ class BaseModel(metaclass=_model_construction.ModelMetaclass):
 
     __slots__ = '__dict__', '__pydantic_fields_set__', '__pydantic_extra__', '__pydantic_private__'
 
+    # Claude Code: explain the func signature of `__init__`:
+    # self, / — self is positional-only (everything before / cannot be passed as a keyword argument).
+    # This is intentional so that self can be used as a field name on a model without conflicting with
+    # the constructor parameter.
+    #   **data: Any — accepts any number of keyword arguments, which become the field values to validate.
+    #       For example, MyModel(name="foo", age=42).
+    #   -> None — returns nothing; the model is mutated in-place via
+    #       __pydantic_validator__.validate_python(data, self_instance=self).
+    # The key design choice here is the / making self positional-only — without it, a model with a field named self
+    # would cause a conflict at instantiation.
     def __init__(self, /, **data: Any) -> None:
         """Create a new model by parsing and validating input data from keyword arguments.
 
